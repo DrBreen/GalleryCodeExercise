@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const uploadController = require('../gallery/upload/controller');
+const listController = require('../gallery/list/controller');
 
 const notFoundHandler = require('../error/notFoundHandler');
 const errorHandler = require('../error/errorHandler');
@@ -11,7 +12,10 @@ const fileUpload = require('express-fileupload');
 router.use(fileUpload());
 
 //TODO: add image route
-//TODO: add gallery route
+
+router.get('/list', (req, res, next) => {
+    listController(req, res).catch(next);
+});
 
 router.post('/upload', (req, res, next) => {
     uploadController(req, res).catch(next);
