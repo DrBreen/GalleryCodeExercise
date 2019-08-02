@@ -22,7 +22,7 @@ const uploadImage = async (imageData) => {
         throw error;
     }
 
-    const saveResult = await saveToStorage(imageData);
+    const saveResult = await saveToStorage(imageData.data);
     const name = saveResult.name;
 
     try {

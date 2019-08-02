@@ -1,11 +1,12 @@
 const { writeFile, exists, unlink } = require('fs');
 const { promisify } = require('util');
 const uuid = require('uuid');
+const { join } = require('path');
 
 let storageLocation;
 
 const pathForName = (name) => {
-    return `${storageLocation}/${name}`;
+    return join(storageLocation, name);
 };
 
 const initStorage = (location) => {
@@ -13,8 +14,6 @@ const initStorage = (location) => {
 };
 
 const saveToStorage = async (data) => {
-    const actualData = data.data;
-
     let name = uuid();
 
     while (await existsInStorage(name)) {
@@ -22,7 +21,7 @@ const saveToStorage = async (data) => {
     }
 
     const path = pathForName(name);
-    await promisify(writeFile)(path, actualData);
+    await promisify(writeFile)(path, data);
 
     return {
         name
