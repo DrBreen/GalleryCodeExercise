@@ -13,11 +13,11 @@ router.use(fileUpload());
 
 //TODO: add image route
 
-router.get('/list', (req, res, next) => {
+router.get('/gallery', (req, res, next) => {
     listController(req, res).catch(next);
 });
 
-router.post('/upload', (req, res, next) => {
+router.post('/gallery', (req, res, next) => {
     uploadController(req, res).catch(next);
 });
 
