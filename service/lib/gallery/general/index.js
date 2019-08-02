@@ -11,6 +11,8 @@ const getImages = async (galleryId) => {
 };
 
 const addImage = async (galleryId, imageId) => {
+    //TODO: add gallery if it's missing
+    //TODO; add images if it's missing
     if (!await existsInStorage(imageId)) {
         throw new Error(`Trying to add non-existent image ${imageId} to gallery ${galleryId}`);
     }

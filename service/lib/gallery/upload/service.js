@@ -15,6 +15,7 @@ const validMimetypes = [
 const uploadImage = async (imageData) => {
 
     //check that file is actually an image
+    //it would be much better to check actual data for type instead of relying on mimetype, but for now that will do
     if (!_.includes(validMimetypes, imageData.mimetype)) {
         const error = new Error('Uploaded file is not an image');
         error.errorCode = NOT_AN_IMAGE_FAILURE;
