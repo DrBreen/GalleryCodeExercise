@@ -4,7 +4,7 @@
   "description": "",
   "main": "bin/www",
   "scripts": {
-    "test": "test"
+    "test": "nyc mocha --timeout=3000"
   },
   "author": "Alexander Leontev",
   "license": "WTFPL",
@@ -19,5 +19,11 @@
     "morgan": "^1.9.1",
     "uuid": "^3.3.2",
     "valid-filename": "^3.1.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "nyc": "^14.1.1",
+    "proxyquire": "^2.1.1"
   }
 }
