@@ -40,9 +40,9 @@ describe('lib.gallery.general', () => {
         });
 
         it('Should return array if galleryId exists with images', async () => {
+            const expectedImages = ['1', '2', '3'];
             await initMongoWithGalleryMockData({ galleryId: 0, images: expectedImages });
 
-            const expectedImages = ['1', '2', '3'];
             const images = await getImages(0);
             expect(images).to.equal(expectedImages);
         });
