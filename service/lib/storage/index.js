@@ -8,28 +8,26 @@ const initStorage = (location) => {
     storageLocation = location;
 };
 
-const save = async (data) => {
+const saveToStorage = async (data) => {
     const actualData = data.data;
 
     let name = uuid();
-    let alreadyExists = true;
 
-    let path;
-
-    while (alreadyExists) {
-        path = `${storageLocation}/${name}`;
-        alreadyExists = await promisify(exists)(path);
-
-        if (alreadyExists) {
-            name = uuid();
-        }
+    while (await existsInStorage(name)) {
+        name = uuid();
     }
 
+    const path = `${storageLocation}/${name}`;
     await promisify(writeFile)(path, actualData);
 
     return {
         name
     };
+};
+
+const existsInStorage = async (name) => {
+    const path = `${storageLocation}/${name}`;
+    return await promisify(exists)(path);
 };
 
 const deleteFromStorage = (name) => {
@@ -38,6 +36,7 @@ const deleteFromStorage = (name) => {
 
 Object.assign(module.exports, {
     initStorage,
-    save,
-    deleteFromStorage
+    saveToStorage,
+    deleteFromStorage,
+    existsInStorage
 });

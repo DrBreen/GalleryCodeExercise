@@ -1,5 +1,6 @@
 const _ = require('lodash');
-const { save } = require('../../storage');
+const { saveToStorage } = require('../../storage');
+const { addImage } = require('../general');
 
 const GENERAL_UPLOAD_FAILURE = 1;
 const NOT_AN_IMAGE_FAILURE = 2;
@@ -19,9 +20,13 @@ const uploadImage = async (imageData) => {
         throw error;
     }
 
-    const saveResult = await save(imageData);
+    const saveResult = await saveToStorage(imageData);
+    const name = saveResult.name;
 
-    //TODO: save to mongo
+    //hardcoded for now, as there may be more galleries with permissions required to access them
+    const galleryId = 0;
+
+    await addImage(galleryId, name);
     //TODO: delete in case of failure
 
     return {

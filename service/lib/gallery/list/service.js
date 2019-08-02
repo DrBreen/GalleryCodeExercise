@@ -1,11 +1,7 @@
-const { queryOneFromCollection } = require('../../mongo-connector');
-
-const collectionName = 'galleries';
+const { getImages } = require('../general');
 
 const getGallery = async (galleryId) => {
-    return await queryOneFromCollection(collectionName, {
-        galleryId
-    });
+    return await getImages(galleryId);
 };
 
 Object.assign(module.exports, {

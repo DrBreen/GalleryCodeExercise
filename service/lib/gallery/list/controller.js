@@ -13,7 +13,7 @@ const listGalleryController = async (req, res) => {
         });
     }
 
-    return res.send(gallery.images);
+    return res.send(gallery);
 };
 
 module.exports = listGalleryController;
