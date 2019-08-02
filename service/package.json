@@ -4,7 +4,9 @@
   "description": "",
   "main": "bin/www",
   "scripts": {
-    "test": "nyc mocha --timeout=3000"
+    "test": "mocha 'test/**/*.js'",
+    "test-cover": "nyc mocha 'test/**/*.js'",
+    "test-cover-all": "nyc --all mocha 'test/**/*.js'"
   },
   "author": "Alexander Leontev",
   "license": "WTFPL",
