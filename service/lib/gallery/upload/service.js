@@ -1,5 +1,6 @@
 const _ = require('lodash');
-const { saveToStorage } = require('../../storage');
+const logger = require('../../logger');
+const { saveToStorage, deleteFromStorage } = require('../../storage');
 const { addImage } = require('../general');
 
 const GENERAL_UPLOAD_FAILURE = 1;
@@ -23,15 +24,23 @@ const uploadImage = async (imageData) => {
     const saveResult = await saveToStorage(imageData);
     const name = saveResult.name;
 
-    //hardcoded for now, as there may be more galleries with permissions required to access them
-    const galleryId = 0;
+    try {
+        //hardcoded for now, as there may be more galleries with permissions required to access them
+        const galleryId = 0;
 
-    await addImage(galleryId, name);
-    //TODO: delete in case of failure
+        await addImage(galleryId, name);
 
-    return {
-        id: saveResult.name
-    };
+        return {
+            id: name
+        };
+    } catch (error) {
+        logger.error('Failed to save uploaded image, rolling back changes');
+
+        //in case of failure, delete file
+        await deleteFromStorage(name);
+
+        throw error;
+    }
 };
 
 Object.assign(module.exports, {

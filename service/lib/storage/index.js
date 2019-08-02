@@ -1,8 +1,12 @@
-const { writeFile, exists } = require('fs');
+const { writeFile, exists, unlink } = require('fs');
 const { promisify } = require('util');
 const uuid = require('uuid');
 
 let storageLocation;
+
+const pathForName = (name) => {
+    return `${storageLocation}/${name}`;
+};
 
 const initStorage = (location) => {
     storageLocation = location;
@@ -17,7 +21,7 @@ const saveToStorage = async (data) => {
         name = uuid();
     }
 
-    const path = `${storageLocation}/${name}`;
+    const path = pathForName(name);
     await promisify(writeFile)(path, actualData);
 
     return {
@@ -26,17 +30,17 @@ const saveToStorage = async (data) => {
 };
 
 const existsInStorage = async (name) => {
-    const path = `${storageLocation}/${name}`;
-    return await promisify(exists)(path);
+    return await promisify(exists)(pathForName(name));
 };
 
-const deleteFromStorage = (name) => {
-
+const deleteFromStorage = async (name) => {
+    await promisify(unlink)(pathForName(name));
 };
 
 Object.assign(module.exports, {
     initStorage,
     saveToStorage,
     deleteFromStorage,
-    existsInStorage
+    existsInStorage,
+    pathForName
 });
