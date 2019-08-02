@@ -15,8 +15,6 @@
     "lodash": "^4.17.15",
     "loglevel": "^1.6.3",
     "loglevel-plugin-prefix": "^0.8.4",
-    "mime-types": "^2.1.24",
-    "mmmagic": "^0.5.3",
     "mongodb": "^3.3.0-beta2",
     "morgan": "^1.9.1",
     "uuid": "^3.3.2"
