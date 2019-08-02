@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { uploadImage, NOT_AN_IMAGE_FAILURE } = require('./service');
 const { BAD_REQUEST, INTERNAL_SERVER_ERROR } = require('http-status-codes');
+const logger = require('../../logger');
 
 const uploadController = async (req, res) => {
 
@@ -19,6 +20,8 @@ const uploadController = async (req, res) => {
     } catch (err) {
         let errorCode = INTERNAL_SERVER_ERROR;
         let errorMessage = 'There was an error during uploading. Please try again.';
+
+        logger.error(err);
 
         if (err.errorCode === NOT_AN_IMAGE_FAILURE) {
             errorCode = BAD_REQUEST;
