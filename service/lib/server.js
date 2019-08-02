@@ -22,6 +22,8 @@ if (!process.env.STORAGE_LOCATION) {
 const configLocation = process.env.MONGO_CONFIG_LOCATION;
 const storageLocation = process.env.STORAGE_LOCATION;
 
+//read Mongo config file, then initialize Mongo
+//upon initializing Mongo, fire up HTTP server
 promisify(fs.readFile)(configLocation).then((jsonData) => {
     const mongoConfig = JSON.parse(jsonData);
     return mongoConfig;
