@@ -9,7 +9,7 @@ let retryInterval = 500;
 let config;
 let mongoClient;
 
-const initMongo = async (mongoClient, mongoConfig) => {
+const initMongo = async (client, mongoConfig) => {
     if (!mongoConfig.url) {
         throw new Error("url is missing from mongo params");
     }
@@ -30,14 +30,13 @@ const initMongo = async (mongoClient, mongoConfig) => {
 
     const url = `mongodb://${encodeURIComponent(config.user)}:${encodeURIComponent(config.password)}@${config.url}/${config.database}`;
 
-
     let retriesLeft = maxRetries;
     let currentRetryInterval = retryInterval;
 
     const tryConnecting = async () => {
         while(retriesLeft > 0) {
             try {
-                mongoClient = await promisify(mongoClient.connect)(url, {
+                mongoClient = await promisify(client.connect)(url, {
                     useNewUrlParser: true
                 });
 
