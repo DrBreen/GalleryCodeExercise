@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+process.on('unhandledRejection', unhandledRejectionError => {
+    //do not let unhandled rejection silently fail, crash the server in this case as this should be handled
+    throw unhandledRejectionError;
+});
+
+require('../lib/server');
+
+
+

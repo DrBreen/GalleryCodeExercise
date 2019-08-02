@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+
+  exc_service:
+    build: service
+    depends_on:
+    - exc_mongo
+    expose:
+    - 4555
+    environment:
+    - PORT=4555
+    - MONGO_CONFIG_LOCATION=/etc/exc_svc/sec/credentials.json
+    - STORAGE_LOCATION=/var/lib/exc_svc/storage
+    volumes:
+    - ~/exc_svc/sec/credentials.json:/etc/exc_svc/sec/credentials.json
+    - ~/exc_svc/storage:/var/lib/exc_svc/storage
+
+  exc_mongo:
+    build: mongo
+    command: [--auth]
+    expose:
+    - 27017
+    volumes:
+    - ~/exc_svc/mongo/data:/data/db
+    - ~/exc_svc/sec:/etc/exc_svc/sec
