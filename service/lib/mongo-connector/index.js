@@ -72,9 +72,14 @@ const queryOneFromCollection = async (collection, query) => {
     return await currentDb().collection(collection).findOne(query, { projection: { _id: 0 }});
 };
 
+const insertToCollection = async (collection, object) => {
+    return await currentDb().collection(collection).insertOne(object);
+};
+
 Object.assign(module.exports, {
     initMongo,
     queryFromCollection,
-    queryOneFromCollection
+    queryOneFromCollection,
+    insertToCollection
 });
 
