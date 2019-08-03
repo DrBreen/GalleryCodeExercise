@@ -3,6 +3,7 @@ const express = require('express');
 const proxyquire = require('proxyquire');
 const request = require('supertest');
 const { NOT_FOUND, INTERNAL_SERVER_ERROR, OK } = require('http-status-codes');
+const logger = require('../../../lib/logger');
 
 let imageController;
 let uploadController;
@@ -43,8 +44,8 @@ describe('lib.routes', () => {
     });
 
     it('Should catch exception in any controller and send error 500', () => {
-        imageController = (req, res) => {
-            throw new Exception('Test exception');
+        imageController = async (req, res) => {
+            throw new Error('Test exception');
         };
         uploadController = imageController;
         listController = imageController;
@@ -64,7 +65,7 @@ describe('lib.routes', () => {
 
     it('GET /gallery should proceed to call list controller', () => {
         let called = false;
-        listController = (req, res) => {
+        listController = async (req, res) => {
             called = true;
             res.send('');
         };
@@ -77,7 +78,7 @@ describe('lib.routes', () => {
 
     it('GET /gallery/:id should proceed to call image controller', () => {
         let called = false;
-        imageController = (req, res) => {
+        imageController = async (req, res) => {
             called = true;
             res.send('');
         };
@@ -90,7 +91,7 @@ describe('lib.routes', () => {
 
     it('POST /gallery should proceed to call upload controller', () => {
         let called = false;
-        uploadController = (req, res) => {
+        uploadController = async (req, res) => {
             called = true;
             res.send('');
         };
