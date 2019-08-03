@@ -11,6 +11,16 @@ const isConnected = () => {
     return connected;
 };
 
+const disconnect = () => {
+    if (connected) {
+        mongoClient.close();
+
+        mongoClient = null;
+        config = null;
+        connected = false;
+    }
+};
+
 const initMongo = async (client, mongoConfig, options = {
     maxRetries: 10,
     retryInterval: 500,
@@ -91,6 +101,7 @@ Object.assign(module.exports, {
     queryFromCollection,
     queryOneFromCollection,
     replaceOneInCollection,
-    isConnected
+    isConnected,
+    disconnect
 });
 
