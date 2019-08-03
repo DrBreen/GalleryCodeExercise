@@ -3,12 +3,10 @@ const logger = require('../../logger');
 const { saveToStorage, deleteFromStorage } = require('../../storage');
 const { addImage } = require('../general');
 
-const GENERAL_UPLOAD_FAILURE = 1;
 const NOT_AN_IMAGE_FAILURE = 2;
 
 const validMimetypes = [
     'image/png',
-    'image/jpg',
     'image/jpeg'
 ];
 
@@ -35,6 +33,8 @@ const uploadImage = async (imageData) => {
             id: name
         };
     } catch (error) {
+        error.failedImageName = name;
+
         logger.error('Failed to save uploaded image, rolling back changes');
 
         //in case of failure, delete file
@@ -46,6 +46,5 @@ const uploadImage = async (imageData) => {
 
 Object.assign(module.exports, {
     uploadImage,
-    GENERAL_UPLOAD_FAILURE,
     NOT_AN_IMAGE_FAILURE
 });
