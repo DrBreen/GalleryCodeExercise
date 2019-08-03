@@ -3,13 +3,19 @@ const logger = require('../logger');
 
 const sleep = promisify(setTimeout);
 
-const maxRetries = 10;
-let retryInterval = 500;
-
 let config;
 let mongoClient;
+let connected = false;
 
-const initMongo = async (client, mongoConfig) => {
+const isConnected = () => {
+    return connected;
+};
+
+const initMongo = async (client, mongoConfig, options = {
+    maxRetries: 10,
+    retryInterval: 500,
+    exponentialFalloff: true
+}) => {
     if (!mongoConfig.url) {
         throw new Error("url is missing from mongo params");
     }
@@ -30,8 +36,8 @@ const initMongo = async (client, mongoConfig) => {
 
     const url = `mongodb://${encodeURIComponent(config.user)}:${encodeURIComponent(config.password)}@${config.url}/${config.database}`;
 
-    let retriesLeft = maxRetries;
-    let currentRetryInterval = retryInterval;
+    let retriesLeft = options.maxRetries;
+    let currentRetryInterval = options.retryInterval;
 
     const tryConnecting = async () => {
         while(retriesLeft > 0) {
@@ -40,12 +46,16 @@ const initMongo = async (client, mongoConfig) => {
                     useNewUrlParser: true
                 });
 
+                connected = true;
+
                 break;
             } catch (err) {
                 logger.warn(`Can't connect to Mongo due to ${err}, retries left: ${retriesLeft}`);
 
                 retriesLeft--;
-                currentRetryInterval = 2 * currentRetryInterval;
+                if (options.exponentialFalloff) {
+                    currentRetryInterval = 2 * currentRetryInterval;
+                }
 
                 if (retriesLeft === 0) {
                     throw err;
@@ -80,6 +90,7 @@ Object.assign(module.exports, {
     initMongo,
     queryFromCollection,
     queryOneFromCollection,
-    replaceOneInCollection
+    replaceOneInCollection,
+    isConnected
 });
 
