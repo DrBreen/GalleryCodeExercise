@@ -1,6 +1,5 @@
 const { INTERNAL_SERVER_ERROR } = require('http-status-codes');
 const { expect } = require('chai');
-const proxyquire = require('proxyquire');
 const { createResponse } = require('../../helpers/express-response');
 
 const SUT = require('../../../lib/error/errorHandler');
