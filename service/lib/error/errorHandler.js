@@ -6,7 +6,9 @@ module.exports = (err, req, res, next) => {
         logger.error(err);
 
         res.status(INTERNAL_SERVER_ERROR);
-        res.send('');
+        res.send({
+            error: 'Something went wrong'
+        });
     } else {
         next(err, req, res);
     }

@@ -1,6 +1,7 @@
 const proxyquire = require('proxyquire');
 const { expect } = require('chai');
 const { NOT_FOUND } = require('http-status-codes');
+const { createResponse } = require('../../../helpers/express-response');
 
 describe('lib.gallery.list.controller', () => {
 
@@ -14,25 +15,6 @@ describe('lib.gallery.list.controller', () => {
             }
         }
     });
-
-    //mock express response object
-    const createResponse = () => {
-        const response = {
-            lastStatus: 0,
-            lastResponse: null,
-        };
-
-        response.status = (status) => {
-            response.lastStatus = status;
-            return response;
-        };
-
-        response.send = (body) => {
-            response.lastResponse = body;
-        };
-
-        return response;
-    };
 
     it('Should send gallery when gallery exists', async () => {
         testImages = ['1', '2', '3'];
