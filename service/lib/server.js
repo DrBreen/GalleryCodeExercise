@@ -9,6 +9,12 @@ const { initMongo } = require('./mongo-connector');
 const { initStorage } = require('./storage');
 const logger = require('./logger');
 
+let server;
+
+const getServer = () => {
+    return server;
+};
+
 if (!process.env.MONGO_CONFIG_LOCATION) {
     logger.error('No Mongo config provided');
     process.exit(1);
@@ -45,6 +51,10 @@ promisify(fs.readFile)(configLocation).then((jsonData) => {
 }).catch((err) => {
     logger.error(`Failed to start up gallery due to ${err}, trace: ${err.stack}`);
     process.exit(1);
+});
+
+Object.assign(module.exports, {
+    getServer
 });
 
 
