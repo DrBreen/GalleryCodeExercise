@@ -5,7 +5,19 @@ const { NOT_FOUND } = require('http-status-codes');
 const galleryId = 0;
 
 const listGalleryController = async (req, res) => {
-    const gallery = await getGallery(galleryId);
+
+    let offset = parseInt(req.query.offset);
+    let count = parseInt(req.query.count);
+
+    if (isNaN(offset)) {
+        offset = undefined;
+    }
+
+    if (isNaN(count)) {
+        count = undefined;
+    }
+
+    const gallery = await getGallery(galleryId, offset, count);
 
     if (!gallery) {
         return res.status(NOT_FOUND).send({
