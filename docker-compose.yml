@@ -6,8 +6,8 @@ services:
     build: service
     depends_on:
     - exc_mongo
-    expose:
-    - 4555
+    ports:
+    - 4555:4555
     environment:
     - PORT=4555
     - MONGO_CONFIG_LOCATION=/etc/exc_svc/sec/credentials.json
