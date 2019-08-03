@@ -5,17 +5,17 @@ const ConnectedMongoClient = (mockData) => ({
             findOne: mockData.findOne,
             replaceOne: mockData.replaceOne
         })
-    })
+    }),
+
+    close: () => {}
 });
 
-const MongoClient = (mockData) => {
-    return {
-        connect: (url, options, callback) => {
-            const mockConnectedMongoClient = ConnectedMongoClient(mockData);
-            callback(null, mockConnectedMongoClient);
-        }
+const MongoClient = (mockData) => ({
+    connect: (url, options, callback) => {
+        const mockConnectedMongoClient = ConnectedMongoClient(mockData);
+        callback(null, mockConnectedMongoClient);
     }
-};
+});
 
 const MongoClientLateSuccess = (mockData, succeedAfterTries) => {
     const mockedClient = {};
