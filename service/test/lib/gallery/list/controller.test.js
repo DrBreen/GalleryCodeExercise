@@ -7,14 +7,23 @@ describe('lib.gallery.list.controller', () => {
 
     let testImages;
 
+    const getResponse = (images) => ({
+        count: testImages.length,
+        imageIds: images
+    });
+
     //mock service response
     const SUT = proxyquire('../../../../lib/gallery/list/controller', {
         './service' : {
             getGallery: async (galleryId, offset, count) => {
+                if (!testImages) {
+                    return;
+                }
+
                 if (offset !== undefined && count !== undefined) {
-                    return testImages.slice(Math.max(0, offset), Math.min(offset + count, testImages.length));
+                    return getResponse(testImages.slice(Math.max(0, offset), Math.min(offset + count, testImages.length)));
                 } else {
-                    return testImages;
+                    return getResponse(testImages);
                 }
             }
         }
@@ -27,7 +36,7 @@ describe('lib.gallery.list.controller', () => {
         const res = createResponse();
 
         await SUT(req, res);
-        expect(res.lastResponse).to.deep.equal(testImages);
+        expect(res.lastResponse).to.deep.equal(getResponse(testImages));
     });
 
     it('Should send whole gallery when gallery exists when only offset was provided', async () => {
@@ -41,7 +50,7 @@ describe('lib.gallery.list.controller', () => {
         const res = createResponse();
 
         await SUT(req, res);
-        expect(res.lastResponse).to.deep.equal(testImages);
+        expect(res.lastResponse).to.deep.equal(getResponse(testImages));
     });
 
     it('Should send whole gallery when gallery exists when only count was provided', async () => {
@@ -55,7 +64,7 @@ describe('lib.gallery.list.controller', () => {
         const res = createResponse();
 
         await SUT(req, res);
-        expect(res.lastResponse).to.deep.equal(testImages);
+        expect(res.lastResponse).to.deep.equal(getResponse(testImages));
     });
 
     it('Should send gallery with offset and count when gallery exists', async () => {
@@ -70,7 +79,7 @@ describe('lib.gallery.list.controller', () => {
         const res = createResponse();
 
         await SUT(req, res);
-        expect(res.lastResponse).to.deep.equal(['2', '3']);
+        expect(res.lastResponse).to.deep.equal(getResponse(['2', '3']));
     });
 
     it('Should send 404 error when gallery does not exist', async () => {
