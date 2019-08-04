@@ -3,7 +3,6 @@ const express = require('express');
 const proxyquire = require('proxyquire');
 const request = require('supertest');
 const { NOT_FOUND, INTERNAL_SERVER_ERROR, OK } = require('http-status-codes');
-const logger = require('../../../lib/logger');
 
 let imageController;
 let uploadController;
@@ -101,6 +100,20 @@ describe('lib.routes', () => {
             expect(called).to.equal(true);
         });
     });
+
+    it('POST /gallery/:id should proceed to call upload controller', () => {
+        let called = false;
+        uploadController = async (req, res) => {
+            called = true;
+            res.send('');
+        };
+
+        request(app).post('/gallery/testId').end((err, res) => {
+            expect(res.statusCode).to.equal(OK);
+            expect(called).to.equal(true);
+        });
+    });
+
 
 });
 

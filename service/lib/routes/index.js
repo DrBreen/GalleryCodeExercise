@@ -23,6 +23,10 @@ router.post('/gallery', (req, res, next) => {
     uploadController(req, res).catch(next);
 });
 
+router.post('/gallery/:id', (req, res, next) => {
+    uploadController(req, res).catch(next);
+});
+
 router.use(errorHandler);
 router.use(notFoundHandler);
 
