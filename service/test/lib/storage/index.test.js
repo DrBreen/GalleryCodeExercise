@@ -73,6 +73,30 @@ describe('lib.storage', () => {
     });
 
     describe('saveToStorage', () => {
+
+        it('Should throw an error if attempting to overwrite non-existing file', async () => {
+            const data = '123456';
+            const fileName = 'doesNotExist';
+
+            try {
+                await saveToStorage(data, fileName);
+
+                throw new Error('saveToStorage should have thrown!');
+            } catch(err) {
+                expect(err.message).to.equal(`Can only replace existing image - ${fileName} does not exist`);
+            }
+        });
+
+        it('Should overwrite existing file with provided filename if it exists', async () => {
+            const name = 'testFileName';
+            virtualFs[pathForName(name)] = 'oldData';
+
+            const newData = 'newData';
+            await saveToStorage(newData, name);
+
+            expect(virtualFs[pathForName(name)]).to.equal(newData);
+        });
+
         it('Should not overwrite file in event of UUID collision', async () => {
             const data1 = '123456';
             const data2 = '789012';

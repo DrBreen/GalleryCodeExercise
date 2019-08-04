@@ -13,11 +13,21 @@ const initStorage = (location) => {
     storageLocation = location;
 };
 
-const saveToStorage = async (data) => {
-    let name = uuid();
+const saveToStorage = async (data, providedName) => {
 
-    while (await existsInStorage(name)) {
+    if (providedName && !await existsInStorage(providedName)) {
+        throw new Error(`Can only replace existing image - ${providedName} does not exist`);
+    }
+
+    let name;
+    if (!providedName) {
         name = uuid();
+
+        while (await existsInStorage(name)) {
+            name = uuid();
+        }
+    } else {
+        name = providedName;
     }
 
     const path = pathForName(name);
