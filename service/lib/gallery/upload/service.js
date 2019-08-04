@@ -10,7 +10,7 @@ const validMimetypes = [
     'image/jpeg'
 ];
 
-const uploadImage = async (imageData) => {
+const uploadImage = async (imageData, imageName) => {
 
     //check that file is actually an image
     //it would be much better to check actual data for type instead of relying on mimetype, but for now that will do
@@ -20,27 +20,35 @@ const uploadImage = async (imageData) => {
         throw error;
     }
 
-    const saveResult = await saveToStorage(imageData.data);
+    const saveResult = await saveToStorage(imageData.data, imageName);
     const name = saveResult.name;
 
-    try {
-        //hardcoded for now, as there may be more galleries with permissions required to access them
-        const galleryId = 0;
+    //if we're adding new image, we need to save it to mongo
+    if (!imageName) {
+        try {
+            //hardcoded for now, as there may be more galleries with permissions required to access them
+            const galleryId = 0;
 
-        await addImage(galleryId, name);
+            await addImage(galleryId, name);
 
+            return {
+                id: name
+            };
+        } catch (error) {
+            error.failedImageName = name;
+
+            logger.error('Failed to save uploaded image, rolling back changes');
+
+            //in case of failure, delete file
+            await deleteFromStorage(name);
+
+            throw error;
+        }
+    } else {
+        //in other case, if we succeeded in saving it, we're good and we can just return success response
         return {
             id: name
         };
-    } catch (error) {
-        error.failedImageName = name;
-
-        logger.error('Failed to save uploaded image, rolling back changes');
-
-        //in case of failure, delete file
-        await deleteFromStorage(name);
-
-        throw error;
     }
 };
 

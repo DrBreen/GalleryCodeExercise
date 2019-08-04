@@ -15,12 +15,18 @@ let virtualMongo = {};
 const rootLocation = '/root';
 const SUT = proxyquire('../../../../lib/gallery/upload/service', {
     '../../storage' : {
-        saveToStorage: async (data) => {
+        saveToStorage: async (data, providedName) => {
             if (saveShouldThrow) {
                 throw new Error('Test saveToStorage error');
             }
 
-            const name = uuid();
+            let name;
+            if (providedName) {
+                name = providedName;
+            } else {
+                name = uuid();
+            }
+
             virtualFs[path.join(rootLocation, name)] = data;
 
             return {
@@ -112,6 +118,21 @@ describe('lib.gallery.upload.service', () => {
 
             expect(virtualFs[path.join(rootLocation, id)]).to.equal(testData);
             expect(virtualMongo[0]).to.equal(id);
+        });
+
+        it('Should not try to save data to Mongo if file is being replaced', async () => {
+            mongoSaveShouldThrow = true;
+            const testData = 'Test data';
+
+            const existingId = 'existingTestId';
+            virtualFs[path.join(rootLocation, existingId)] = 'Old test data';
+
+            const { id } = await uploadImage({
+                mimetype: 'image/png',
+                data: testData
+            }, existingId);
+
+            expect(virtualFs[path.join(rootLocation, existingId)]).to.equal(testData);
         });
 
     });
