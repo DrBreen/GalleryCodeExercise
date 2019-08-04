@@ -2,8 +2,10 @@ const proxyquire = require('proxyquire');
 const { expect } = require('chai');
 const uuid = require('uuid');
 const path = require('path');
+const { OVERWRITING_NONEXISTENT_FILE_ERROR } = require('../../../../lib/storage');
 
 let saveShouldThrow = false;
+let saveErrorCode;
 let mongoSaveShouldThrow = false;
 
 //virtual filesystem: path is mapped to contents of file
@@ -17,7 +19,9 @@ const SUT = proxyquire('../../../../lib/gallery/upload/service', {
     '../../storage' : {
         saveToStorage: async (data, providedName) => {
             if (saveShouldThrow) {
-                throw new Error('Test saveToStorage error');
+                const error = new Error('Test saveToStorage error');
+                error.errorCode = saveErrorCode;
+                throw error;
             }
 
             let name;
@@ -54,7 +58,8 @@ storage.initStorage(rootLocation);
 
 const {
     uploadImage,
-    NOT_AN_IMAGE_FAILURE
+    NOT_AN_IMAGE_FAILURE,
+    OVERWRITING_NONEXISTENT_FILE_FAILURE
 } = SUT;
 
 describe('lib.gallery.upload.service', () => {
@@ -64,6 +69,7 @@ describe('lib.gallery.upload.service', () => {
         virtualMongo = {};
         mongoSaveShouldThrow = false;
         saveShouldThrow = false;
+        saveErrorCode = null;
     });
 
     describe('uploadImage', () => {
@@ -132,7 +138,24 @@ describe('lib.gallery.upload.service', () => {
                 data: testData
             }, existingId);
 
-            expect(virtualFs[path.join(rootLocation, existingId)]).to.equal(testData);
+            expect(id).to.equal(existingId);
+            expect(virtualFs[path.join(rootLocation, id)]).to.equal(testData);
+        });
+
+        it('Should throw error with correct code if overwriting failed due to nonexistent file', async () => {
+            saveShouldThrow = true;
+            saveErrorCode = OVERWRITING_NONEXISTENT_FILE_ERROR;
+
+            try {
+                await uploadImage({
+                    mimetype: 'image/png',
+                    data: 'someData'
+                }, 'someId');
+
+                throw new Error('uploadImage should have thrown!');
+            } catch (err) {
+                expect(err.errorCode).to.equal(OVERWRITING_NONEXISTENT_FILE_FAILURE);
+            }
         });
 
     });

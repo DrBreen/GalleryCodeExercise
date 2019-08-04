@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const logger = require('../../logger');
-const { saveToStorage, deleteFromStorage } = require('../../storage');
+const { saveToStorage, deleteFromStorage, OVERWRITING_NONEXISTENT_FILE_ERROR } = require('../../storage');
 const { addImage } = require('../general');
 
 const NOT_AN_IMAGE_FAILURE = 2;
+const OVERWRITING_NONEXISTENT_FILE_FAILURE = NOT_AN_IMAGE_FAILURE + OVERWRITING_NONEXISTENT_FILE_ERROR;
 
 const validMimetypes = [
     'image/png',
@@ -20,7 +21,17 @@ const uploadImage = async (imageData, imageName) => {
         throw error;
     }
 
-    const saveResult = await saveToStorage(imageData.data, imageName);
+    let saveResult;
+    try {
+        saveResult = await saveToStorage(imageData.data, imageName);
+    } catch (err) {
+
+        if (err.errorCode === OVERWRITING_NONEXISTENT_FILE_ERROR) {
+            err.errorCode = OVERWRITING_NONEXISTENT_FILE_FAILURE;
+        }
+
+        throw err;
+    }
     const name = saveResult.name;
 
     //if we're adding new image, we need to save it to mongo
@@ -54,5 +65,6 @@ const uploadImage = async (imageData, imageName) => {
 
 Object.assign(module.exports, {
     uploadImage,
-    NOT_AN_IMAGE_FAILURE
+    NOT_AN_IMAGE_FAILURE,
+    OVERWRITING_NONEXISTENT_FILE_FAILURE
 });

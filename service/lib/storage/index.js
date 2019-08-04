@@ -3,6 +3,8 @@ const { promisify } = require('util');
 const uuid = require('uuid');
 const { join } = require('path');
 
+const OVERWRITING_NONEXISTENT_FILE_ERROR = 1;
+
 let storageLocation;
 
 const pathForName = (name) => {
@@ -16,7 +18,9 @@ const initStorage = (location) => {
 const saveToStorage = async (data, providedName) => {
 
     if (providedName && !await existsInStorage(providedName)) {
-        throw new Error(`Can only replace existing image - ${providedName} does not exist`);
+        const error = new Error(`Can only replace existing image - ${providedName} does not exist`);
+        error.errorCode = OVERWRITING_NONEXISTENT_FILE_ERROR;
+        throw error;
     }
 
     let name;
@@ -51,5 +55,6 @@ Object.assign(module.exports, {
     saveToStorage,
     deleteFromStorage,
     existsInStorage,
-    pathForName
+    pathForName,
+    OVERWRITING_NONEXISTENT_FILE_ERROR
 });

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { uploadImage, NOT_AN_IMAGE_FAILURE } = require('./service');
+const { uploadImage, NOT_AN_IMAGE_FAILURE, OVERWRITING_NONEXISTENT_FILE_FAILURE } = require('./service');
 const { BAD_REQUEST, INTERNAL_SERVER_ERROR } = require('http-status-codes');
 const logger = require('../../logger');
 
@@ -11,8 +11,10 @@ const uploadController = async (req, res) => {
         });
     }
 
+    const imageName = _.get(req, 'params.id');
+
     try {
-        const uploadResult = await uploadImage(req.files.image);
+        const uploadResult = await uploadImage(req.files.image, imageName);
 
         return res.send({
             imageId: uploadResult.id
@@ -23,7 +25,7 @@ const uploadController = async (req, res) => {
 
         logger.error(err);
 
-        if (err.errorCode === NOT_AN_IMAGE_FAILURE) {
+        if (err.errorCode === NOT_AN_IMAGE_FAILURE || err.errorCode === OVERWRITING_NONEXISTENT_FILE_FAILURE) {
             errorCode = BAD_REQUEST;
             errorMessage = err.message;
         }
