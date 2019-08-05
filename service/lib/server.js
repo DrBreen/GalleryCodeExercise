@@ -36,8 +36,8 @@ promisify(fs.readFile)(configLocation).then((jsonData) => {
 
     const app = express();
     app.use(middlewareLogger('dev'));
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: false }));
+    app.use(express.json({limit: '50mb'}));
+    app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000000}));
     app.use('/', router);
 
     const port = process.env.PORT || 3000;
