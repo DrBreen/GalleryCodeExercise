@@ -9,6 +9,8 @@ Only change user name and password to match with the ones in `credentials.js`, d
 
 4. Create directory for Mongo files at `~/exc_svc/mongo/data`.
 
+5. If running on Mac, make sure you're running Docker from Edge channel with experimental settings, because Mongo has troubles accessing mounted volumes with stable Docker.
+
 ### Starting the service:
 To start the service, you can run either `start.sh` or `start_full_rebuild.sh`.
 The only difference is that `start_full_rebuil.sh` will rebuild all Docker images.
