@@ -1,11 +1,13 @@
 const { getImages } = require('../general');
 
 const getGallery = async (galleryId, offset, count) => {
-    const images = await getImages(galleryId);
+    const imagesOriginal = await getImages(galleryId);
 
-    if (!images) {
+    if (!imagesOriginal) {
         return;
     }
+
+    const images = imagesOriginal.reverse();
 
     let returnedImages;
 
