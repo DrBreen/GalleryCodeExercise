@@ -24,4 +24,9 @@ if (excDb.getUser(credentials.user) === null) {
     print("R/W user is already created");
 }
 
+//create default gallery
+excDb.galleries.insertOne({
+    "galleryId": 0,
+    "images" : []
+});
 
