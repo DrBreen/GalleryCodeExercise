@@ -1,4 +1,4 @@
-const { getImages } = require('../general');
+const { getImages, loadComments } = require('../general');
 
 const getGallery = async (galleryId, offset, count) => {
     const imagesOriginal = await getImages(galleryId);
@@ -17,9 +17,12 @@ const getGallery = async (galleryId, offset, count) => {
         returnedImages = images;
     }
 
+    const comments = await loadComments(galleryId);
+
     return {
         count: images.length,
-        imageIds: returnedImages
+        imageIds: returnedImages,
+        comments
     };
 };
 

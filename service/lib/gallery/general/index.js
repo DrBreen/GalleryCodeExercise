@@ -28,14 +28,39 @@ const addImage = async (galleryId, imageId) => {
             galleryId,
             images: [
                 imageId
-            ]
+            ],
+            comments: {}
         };
     }
 
     await replaceOneInCollection(collectionName, { galleryId }, gallery);
 };
 
+const saveComment = async (galleryId, imageId, comment) => {
+    const images = await getImages(galleryId);
+
+    if (!images.includes(imageId)) {
+        throw new Error(`Trying to add comment for non-existent image ${imageId} in gallery ${galleryId}`);
+    }
+
+    const gallery = await getGallery(galleryId);
+    if (!gallery) {
+        throw new Error(`Trying to add comment for non-existent gallery ${galleryId}`);
+    }
+
+    gallery.comments[imageId] = comment;
+
+    await replaceOneInCollection(collectionName, { galleryId }, gallery);
+};
+
+const loadComments = async (galleryId) => {
+    const gallery = await getGallery(galleryId);
+    return gallery.comments;
+};
+
 Object.assign(module.exports, {
     getImages,
-    addImage
+    addImage,
+    saveComment,
+    loadComments
 });

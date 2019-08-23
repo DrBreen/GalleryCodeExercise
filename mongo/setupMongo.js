@@ -27,6 +27,7 @@ if (excDb.getUser(credentials.user) === null) {
 //create default gallery
 excDb.galleries.insertOne({
     "galleryId": 0,
-    "images" : []
+    "images" : [],
+    "comments" : {}
 });
 

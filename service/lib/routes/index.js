@@ -5,6 +5,7 @@ const fileUpload = require('express-fileupload');
 const imageController = require('../gallery/image/controller');
 const uploadController = require('../gallery/upload/controller');
 const listController = require('../gallery/list/controller');
+const commentsController = require('../gallery/comment/controller');
 
 const notFoundHandler = require('../error/notFoundHandler');
 const errorHandler = require('../error/errorHandler');
@@ -25,6 +26,10 @@ router.post('/gallery', (req, res, next) => {
 
 router.post('/gallery/:id', (req, res, next) => {
     uploadController(req, res).catch(next);
+});
+
+router.put('/comments/:id', (req, res, next) => {
+    commentsController(req, res).catch(next);
 });
 
 router.use(errorHandler);
