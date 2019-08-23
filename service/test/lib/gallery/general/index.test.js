@@ -10,7 +10,7 @@ const SUT = proxyquire('../../../../lib/gallery/general', {
     }
 });
 const { initMongo } = require('../../../../lib/mongo-connector');
-const { getImages, addImage } = SUT;
+const { getImages, addImage, saveComment } = SUT;
 const { MongoConfig, MongoClient } = require('../../../helpers/mock-mongo-client');
 
 describe('lib.gallery.general', () => {
@@ -109,6 +109,74 @@ describe('lib.gallery.general', () => {
             expect(gallery.galleryId).to.equal(0);
             expect(gallery.images).to.deep.equal(['test', 'exists']);
         });
+    });
+
+    describe('saveComment', () => {
+
+        let stored;
+
+        //mock Mongo query result
+        const initMongoWithGalleryMockData = async (gallery) => {
+            await initMongo(MongoClient({
+                findOne: () => Promise.resolve(gallery),
+                replaceOne: (query, document) => stored = document
+            }), MongoConfig);
+        };
+
+        it('Should throw an error when trying to save comment for non-existent image', async () => {
+            const storage = {
+                galleryId: 0,
+                images: ['test'],
+                comments: {}
+            };
+
+            await initMongoWithGalleryMockData(storage);
+
+            try {
+                await saveComment(0, 'nonExistent', 'comment');
+                throw new Error('Exception was expected');
+            } catch (err) {
+                expect(err.message).to.equal('Trying to add comment for non-existent image nonExistent in gallery 0');
+            }
+
+        });
+
+        it('Should throw an error when trying to save comment for non-existent gallery', async () => {
+            await initMongoWithGalleryMockData(null);
+
+            try {
+                await saveComment(1, 'test', 'comment');
+                throw new Error('Exception was expected');
+            } catch (err) {
+                expect(err.message).to.equal('Trying to add comment for non-existent gallery 1');
+            }
+
+        });
+
+        it('Should save comment correctly', async () => {
+            stored = null;
+
+            const storage = {
+                galleryId: 0,
+                images: ['test'],
+                comments: {}
+            };
+
+            const expected = {
+                galleryId: 0,
+                images: ['test'],
+                comments: {
+                    'test' : 'comment'
+                }
+            };
+
+            await initMongoWithGalleryMockData(storage);
+
+            await saveComment(0, 'test', 'comment');
+
+            expect(stored).to.deep.equal(expected);
+        });
+
     });
 
 });

@@ -37,15 +37,16 @@ const addImage = async (galleryId, imageId) => {
 };
 
 const saveComment = async (galleryId, imageId, comment) => {
-    const images = await getImages(galleryId);
-
-    if (!images.includes(imageId)) {
-        throw new Error(`Trying to add comment for non-existent image ${imageId} in gallery ${galleryId}`);
-    }
 
     const gallery = await getGallery(galleryId);
     if (!gallery) {
         throw new Error(`Trying to add comment for non-existent gallery ${galleryId}`);
+    }
+
+    const images = await getImages(galleryId);
+
+    if (!images.includes(imageId)) {
+        throw new Error(`Trying to add comment for non-existent image ${imageId} in gallery ${galleryId}`);
     }
 
     gallery.comments[imageId] = comment;

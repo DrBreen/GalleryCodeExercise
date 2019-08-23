@@ -7,11 +7,13 @@ const { NOT_FOUND, INTERNAL_SERVER_ERROR, OK } = require('http-status-codes');
 let imageController;
 let uploadController;
 let listController;
+let commentController;
 
 const SUT = proxyquire('../../../lib/routes', {
     '../gallery/image/controller' : (req, res) => imageController(req, res),
     '../gallery/upload/controller' : (req, res) => uploadController(req, res),
     '../gallery/list/controller' : (req, res) => listController(req, res),
+    '../gallery/comment/controller' : (req, res) => commentController(req, res),
     'express-fileupload' : () => (req, res, next) => next()
 });
 
@@ -109,6 +111,19 @@ describe('lib.routes', () => {
         };
 
         request(app).post('/gallery/testId').end((err, res) => {
+            expect(res.statusCode).to.equal(OK);
+            expect(called).to.equal(true);
+        });
+    });
+
+    it('PUT /comments/:id should proceed to call comments controller', () => {
+        let called = false;
+        commentController = async (req, res) => {
+            called = true;
+            res.send('');
+        };
+
+        request(app).put('/comments/testId').end((err, res) => {
             expect(res.statusCode).to.equal(OK);
             expect(called).to.equal(true);
         });
